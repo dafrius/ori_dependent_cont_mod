@@ -20,4 +20,5 @@ target location.
 
 ![instructions](images/instruction_screen.png)
 
-
+Participant data will be saved in a folder named "data" after the experiment is
+finished.
