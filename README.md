@@ -8,8 +8,9 @@ always be in the same folder.
 
 The first prompt will ask you for information regarding the subject (age, etc.)
 and your monitor (refresh rate, size). It is important to fill these in with
-the correct information, because image presentation time is defined using the
-refresh rate of the monitor.
+the correct information, because stimulus presentation time is defined using the
+refresh rate of the monitor, and stimulus size is defined by the screen size when
+the observer sits 57 cms away from the screen.
 
 ![dialogbox](images/sub_info_dialog_box.png)
 
