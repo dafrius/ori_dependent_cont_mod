@@ -51,6 +51,8 @@ exp_info = {
         'gender': ('male', 'female'),
         'age':'',
         'left-handed':False,
+        'Stim_size':'2.5',
+        'eccentricity':'1',
         'screenwidth(cm)': '49',
         'screenresolutionhori(pixels)': '1920',
         'screenresolutionvert(pixels)': '1200',
@@ -86,7 +88,7 @@ exp_info['exp_name'] = exp_name
 # Create a unique filename for the experiment data
 if not os.path.isdir(datapath):
     os.makedirs(datapath)
-data_fname = exp_info['participant'] + '_' + exp_info['date']
+data_fname = exp_info['participant'] + '_' + exp_info['date'] + '_' + exp_info['eccentricity'] + '-' + exp_info['Stim_size']
 data_fname = os.path.join(datapath, data_fname)
     
 
@@ -289,7 +291,7 @@ win.mouseVisible=False
 
 
 # size of the gratings and the circles
-size=2.5
+size = float(exp_info['Stim_size'])
 
 #We define the target grating
 grating = visual.GratingStim(
@@ -316,7 +318,7 @@ gratingbg.phase = 0.0 #for now it's 0 but we randomly change and adapt this to t
 #Each of the 2 target gratings is going to appear 
 #at 5 degrees eccentricity from the center
 grating_vpos = [0, 0] # height (0 = center)
-grating_hpos = [-1.5, 1.5] # laterality (0 = center)
+grating_hpos = [-float(exp_info['eccentricity']), float(exp_info['eccentricity'])]# laterality (0 = center)
 
 # target grating is ALWAYS HORIZONTAL:
 orientations = [90.0, 90.0] 
@@ -598,10 +600,12 @@ for trial in practrials:
             break
         elif 'left' in keys:
             resp = 0
-            feedback.pos=[-5,0]
+            #feedback.pos=[-5,0]
+            feedback.pos=[-float(exp_info['eccentricity']),0]
         elif 'right' in keys:
             resp = 1
-            feedback.pos=[5,0]
+            #feedback.pos=[5,0]
+            feedback.pos=[float(exp_info['eccentricity']),0]
     #We check accuracy after the key press, and show a check or cross depending on that.
     if resp == 0 and trial['targ'] == 0:
         acc = 1
@@ -796,10 +800,10 @@ for trial in trials:
             break
         elif 'left' in keys:
             resp = 0
-            feedback.pos=[-2.5,0]
+            feedback.pos=[-float(exp_info['eccentricity']),0]
         elif 'right' in keys:
             resp = 1
-            feedback.pos=[2.5,0]
+            feedback.pos=[float(exp_info['eccentricity']),0]
     #We check accuracy after the key press, and show a check or cross depending on that.
     if resp == 0 and trial['targetloc'] == 0:
         acc = 1
