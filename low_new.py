@@ -19,6 +19,7 @@ import numpy.matlib as npm
 from psychopy import visual, event, core, gui, data, monitors
 import PsiMarginal
 import copy
+import instr
 
 datapath = 'data'
 
@@ -27,7 +28,7 @@ datapath = 'data'
 #========================================
     
 # Get subject name, gender, age, handedness through a dialog box
-exp_name = 'Contrast Stuff'
+exp_name = 'Contrast Stuff, foveal'
 exp_info = {
         'participant': '',
         'gender': ('male', 'female'),
@@ -53,172 +54,10 @@ exp_info['exp_name'] = exp_name
 # Create a unique filename for the experiment data
 if not os.path.isdir(datapath):
     os.makedirs(datapath)
-data_fname = exp_info['participant'] + '_' + exp_info['date']
+data_fname = exp_info['participant'] + '_' + exp_info['age'] + '_' + exp_info['gender'][0] + '_' + exp_info['date'] + '.csv'
 data_fname = os.path.join(datapath, data_fname)
-    
 
-###Psi Parameters
-
-stimRange = np.geomspace(0.001,1,350,endpoint=True)    # Contrast ranges between .001 and 1, 350 possibilities.
-Pfunction = 'Weibull' #aka log Weibull 
-nTrials = 40 # Trials per staircase, per block = nTrials x 2 # Must be dividible by 4
-nStaircase = 2 
-nConditions = 3 #Parallel, Orthogonal, Isolated
-nTemporal = 1 # if only Simultaneous, 1
-              # else, 2
-nRunPerCond = 3
-
-threshold = stimRange 
-thresholdOrthSimPrior = ('normal',.0139,.07) # Prior for Orthogonal Context condition
-thresholdParrSimPrior = ('normal',.2549, .2) # Prior for Parallel Context condition
-thresholdIsoSimPrior = ('normal',.0137,.07) # Prior for Isolated condition
-
-
-sigma = np.geomspace(0.5,20,50,endpoint=True) #slope
-slopePrior = ('gamma', 3, 6)#('gamma',3,.1) #normal dist, mean, sd
-guessRate = 0.50 #it's a 2AFC, so guessRate is 50%
-guessPrior = ('uniform',None) #we enter no prior for guess rate.
-lapse = 0.05 #lapse rate is observer-based errors, such as pressing a wrong key. we set it to 5%. 
-lapsePrior = ('beta',2,20) #try changing this
-marginalize = True
-
-# Here we define 2 Psi staircases for each of the context conditions(parallel, orthogonal, isolated)
-# 
-
-
-psiParrSim1 = PsiMarginal.Psi(stimRange, Pfunction=Pfunction, nTrials=nTrials, threshold=stimRange, thresholdPrior=thresholdParrSimPrior,
-                      slope=sigma, slopePrior=slopePrior, guessRate=guessRate, guessPrior=guessPrior,
-                      lapseRate=lapse, lapsePrior=lapsePrior, marginalize=marginalize)
-psiParrSim2 = PsiMarginal.Psi(stimRange, Pfunction=Pfunction, nTrials=nTrials, threshold=stimRange, thresholdPrior=thresholdParrSimPrior,
-                      slope=sigma, slopePrior=slopePrior, guessRate=guessRate, guessPrior=guessPrior,
-                      lapseRate=lapse, lapsePrior=lapsePrior, marginalize=marginalize)
-psiIsoSim1 = PsiMarginal.Psi(stimRange, Pfunction=Pfunction, nTrials=nTrials, threshold=stimRange, thresholdPrior=thresholdIsoSimPrior,
-                      slope=sigma, slopePrior=slopePrior, guessRate=guessRate, guessPrior=guessPrior,
-                      lapseRate=lapse, lapsePrior=lapsePrior, marginalize=marginalize)
-psiIsoSim2 = PsiMarginal.Psi(stimRange, Pfunction=Pfunction, nTrials=nTrials, threshold=stimRange, thresholdPrior=thresholdIsoSimPrior,
-                      slope=sigma, slopePrior=slopePrior, guessRate=guessRate, guessPrior=guessPrior,
-                      lapseRate=lapse, lapsePrior=lapsePrior, marginalize=marginalize)
-psiOrthSim1 = PsiMarginal.Psi(stimRange, Pfunction=Pfunction, nTrials=nTrials, threshold=stimRange, thresholdPrior=thresholdOrthSimPrior,
-                      slope=sigma, slopePrior=slopePrior, guessRate=guessRate, guessPrior=guessPrior,
-                      lapseRate=lapse, lapsePrior=lapsePrior, marginalize=marginalize)
-psiOrthSim2 = PsiMarginal.Psi(stimRange, Pfunction=Pfunction, nTrials=nTrials, threshold=stimRange, thresholdPrior=thresholdOrthSimPrior,
-                      slope=sigma, slopePrior=slopePrior, guessRate=guessRate, guessPrior=guessPrior,
-                      lapseRate=lapse, lapsePrior=lapsePrior, marginalize=marginalize)
-
-
-#Background orientation has two possibilities: Parallel or Orthogonal to the target
-# third is no background grating (361)
-bgorilist = npm.repmat(np.repeat([90,0,361],int(nTrials*nStaircase)),1,nTemporal)
-bgorilist = bgorilist[0]
-
-#temporal relationship: simultaneous, or leading
-
-if nTemporal == 1:
-    templist=np.sort(npm.repmat([0],1,int(nTrials)*nConditions*nStaircase))
-    templist=templist[0]
-else:        
-    templist= np.sort(npm.repmat([0,1],1,int(nTrials*nConditions*nStaircase)))
-    templist= templist[0]
-
-
-staircaselist=npm.repmat(np.sort(npm.repmat(list(range(1,nStaircase+1)),1,int(nTrials))),1,nTemporal*nConditions)
-staircaselist=staircaselist[0]
-#print(staircaselist)
-
-#Targets can be shown at either one of 4 locations. 
-targetloclist = npm.repmat([0,1,2,3],1,int(nTrials/4*nConditions*nTemporal*nStaircase)) # We divide by four
-targetloclist = targetloclist[0]
-
-
-
-
-stim_order = []
-    
-#Creating a list of dictionaries that contains information about each single trial.
-for bgori, temp, targloc, staircase in zip(bgorilist, templist, targetloclist, staircaselist):
-    stim_order.append({'bgori': bgori, 'temp':temp, 'staircase':staircase, 'targetloc': targloc,})
-print(stim_order)
-responses = []
-
-#This part is about shuffling
-#We need to shuffle the staircases WITHIN each condition.
-#because of the ordering I made in the stim_order, 
-#conditions are always in the following order:
-#ParrSim1-ParrSim2-OrthSim1-OrthSim2-IsoSim1-IsoSim2
-#If you get rid of a temporal condition or a staircase, the order stays the same,
-#Just that the removed ones are dropped from the order
-#For example, if you do nTemporal=2, nStaircase=1
-#It becomes: ParrSim1-OrthSim1-ParrLead1-OrthLead1
-
-
-
-#Now we will intermingle the two staircases for each condition (if there is two)
-
-#For that, we first slice the stim_order into 3 (for each condition), and shuffle within each
-# slice 
-
-ParrSim=[]
-OrthSim=[]
-IsoSim=[]
-
-total=nTrials*nStaircase*nConditions
-#   we turn them into integers 
-#   from floating points,because while indexing we don't want floats
-PSslcr=slice(0,int(total/3),1) 
-OSslcr=slice(int(total/3),int(total*2/3),1)
-ISslcr=slice(int(total*2/3),total,1) 
-alltotal=total*nRunPerCond
-
-PS1=stim_order[PSslcr]
-OS1=stim_order[OSslcr]
-IS1=stim_order[ISslcr]
-
-ParrSim=copy.deepcopy(PS1) 
-OrthSim=copy.deepcopy(OS1)
-IsoSim=copy.deepcopy(IS1) # We deepcopy, because if we don't, they are still 
-                            # connected to the stim_order, and if we do any operation,
-                            # stim_order gets affected from that change as well.
-
-rnd.shuffle(ParrSim)
-rnd.shuffle(OrthSim)
-rnd.shuffle(IsoSim)
-
-
-#Shuffling order of runs/conditions
-conds=[]
-cond_order= [1,2,3]
-#cond_order=npm.repmat([1,2],1,3)
-for i in range(nRunPerCond):
-    rnd.shuffle(cond_order)
-    conds.extend(cond_order)
-
-
-#Tagging the conditions with the corresponding number
-# Parallel = 1, Orthogonal = 2, Isolated = 3
-for ind in range(0,int(len(ParrSim))):
-        ParrSim[ind].update(cond=1)
-for ind in range(0,int(len(OrthSim))):
-        OrthSim[ind].update(cond=2)
-for ind in range(0,int(len(IsoSim))):
-        IsoSim[ind].update(cond=3)
-    
-#Putting all the shuffled, mixed, trial blocks into one final variable
-#using the shuffled condition order
-alltrials = []
-for i in range(0,int(len(conds))):
-    if conds[i] == 1:
-        alltrials.extend(ParrSim)
-    elif conds[i] == 2:
-        alltrials.extend(OrthSim)
-    elif conds[i] == 3:
-        alltrials.extend(IsoSim)
-        
-        
-#using PsychoPy's TrialHandler, makes it easier to index in a loop, and output
-trials = data.TrialHandler(alltrials, nReps=1, extraInfo=exp_info,
-                           method='sequential', originPath=datapath)
-
-    ########################################
+     ########################################
 #### Window Settings and grating properties #####
     ########################################
 #We define a monitor, which helps control for visual angle.
@@ -251,6 +90,165 @@ win = visual.Window(monitor = mon,
                     color='grey',
                     units='deg',
                     fullscr=True) #Hide the cursor when the window is opened: win.mouseVisible=False #We define the target grating
+
+nTrials=40
+nStaircase = 2 
+nConditions = 3 #Parallel, Orthogonal, Isolated
+nTemporal = 1 # if only ultaneous, 1
+nRunPerCond = 3
+nTargets = 4 # can be 1, 2 or 4
+   
+
+###Psi Parameters
+def makePsi(thresholdPrior, threshold, stimRangeStart=0.0001, stimRangeEnd=1, steps=350, nTrials=nTrials):
+    staircase = PsiMarginal.Psi(stimRange= np.geomspace(stimRangeStart, stimRangeEnd,steps,endpoint=True),
+            Pfunction='Weibull', nTrials=nTrials,# Contrast ranges between .001 and 1, 350 possibilities.
+            threshold=np.geomspace(0.0001,1,350,endpoint=True),
+            thresholdPrior=thresholdPrior, guessRate=0.5, lapseRate=0.05,
+            slope = np.geomspace(0.5,20,50,endpoint=True), 
+            slopePrior=('gamma', 3,6), guessPrior= ('uniform',None),
+            lapsePrior=('beta',2,20), marginalize=True)
+    return staircase 
+
+thresholdOrthPrior = ('normal',.0139,.07) # Prior for Orthogonal Context condition
+thresholdParrPrior = ('normal',.2549, .2) # Prior for Parallel Context condition
+thresholdIsoPrior = ('normal',.0137,.07) # Prior for Isolated condition
+
+# Here we define 2 Psi staircases for each of the context conditions(parallel, orthogonal, isolated)
+# 
+
+
+psiParr1 = makePsi(thresholdPrior=thresholdParrPrior)
+psiParr2 = makePsi(thresholdPrior=thresholdParrPrior)
+psiIso1 = makePsi(thresholdPrior=thresholdIsoPrior)
+psiIso2 = makePsi(thresholdPrior=thresholdIsoPrior)
+psiOrth1 = makePsi(thresholdPrior=thresholdOrthPrior)
+psiOrth2 = makePsi(thresholdPrior=thresholdOrthPrior)
+
+#Background orientation has two possibilities: Parallel or Orthogonal to the target
+# third is no background grating (361)
+bgorilist = npm.repmat(np.repeat([90,0,361],int(nTrials*nStaircase)),1,nTemporal)
+bgorilist = bgorilist[0]
+
+#temporal relationship: simultaneous, or leading
+
+if nTemporal == 1:
+    templist=np.sort(npm.repmat([0],1,int(nTrials)*nConditions*nStaircase))
+    templist=templist[0]
+else:        
+    templist= np.sort(npm.repmat([0,1],1,int(nTrials*nConditions*nStaircase)))
+    templist= templist[0]
+
+
+staircaselist=npm.repmat(np.sort(npm.repmat(list(range(1,nStaircase+1)),1,int(nTrials))),1,nTemporal*nConditions)
+staircaselist=staircaselist[0]
+#print(staircaselist)
+
+
+
+#Targets can be shown at either one of 4 locations. 
+if nTargets == 1:
+    targetloclist = np.zeros(nTrials*nStaircase*nConditions)
+elif nTargets == 2:
+    targetloclist = [np.zeros(int(nTrials*nStaircase*nConditions/2)), np.ones(int(nTrials*nStaircase*nConditions/2))]
+    targetloclist = np.append(targetloclist[0],targetloclist[1])
+elif nTargets == 4:
+    targetloclist = npm.repmat([0,1,2,3],1,int(nTrials/4*nConditions*nTemporal*nStaircase)) # We divide by four
+    targetloclist = targetloclist[0]
+
+stim_order = []
+    
+#Creating a list of dictionaries that contains information about each single trial.
+for bgori, temp, targloc, staircase in zip(bgorilist, templist, targetloclist, staircaselist):
+    stim_order.append({'bgori': bgori, 'temp':temp, 'staircase':staircase, 'targetloc': targloc,})
+print(stim_order)
+responses = []
+
+#This part is about shuffling
+#We need to shuffle the staircases WITHIN each condition.
+#because of the ordering I made in the stim_order, 
+#conditions are always in the following order:
+#ParrSim1-ParrSim2-OrthSim1-OrthSim2-IsoSim1-IsoSim2
+#If you get rid of a temporal condition or a staircase, the order stays the same,
+#Just that the removed ones are dropped from the order
+#For example, if you do nTemporal=2, nStaircase=1
+#It becomes: ParrSim1-OrthSim1-ParrLead1-OrthLead1
+
+
+
+#Now we will intermingle the two staircases for each condition (if there is two)
+
+#For that, we first slice the stim_order into 3 (for each condition), and shuffle within each
+# slice 
+
+Parr=[]
+Orth=[]
+Iso=[]
+
+total=nTrials*nStaircase*nConditions
+#   we turn them into integers 
+#   from floating points,because while indexing we don't want floats
+PSslcr=slice(0,int(total/3),1) 
+OSslcr=slice(int(total/3),int(total*2/3),1)
+ISslcr=slice(int(total*2/3),total,1) 
+alltotal=total*nRunPerCond
+
+PS1=stim_order[PSslcr]
+OS1=stim_order[OSslcr]
+IS1=stim_order[ISslcr]
+
+Parr=copy.deepcopy(PS1) 
+Orth=copy.deepcopy(OS1)
+Iso=copy.deepcopy(IS1) # We deepcopy, because if we don't, they are still 
+                            # connected to the stim_order, and if we do any operation,
+                            # stim_order gets affected from that change as well.
+
+rnd.shuffle(Parr)
+rnd.shuffle(Orth)
+rnd.shuffle(Iso)
+
+
+#Shuffling order of runs/conditions
+conds=[]
+cond_order= [1,2,3]
+#cond_order=npm.repmat([1,2],1,3)
+for i in range(nRunPerCond):
+    rnd.shuffle(cond_order)
+    conds.extend(cond_order)
+
+
+#Tagging the conditions with the corresponding number
+# Parallel = 1, Orthogonal = 2, Isolated = 3
+for ind in range(0,int(len(Parr))):
+        Parr[ind].update(cond=1)
+for ind in range(0,int(len(Orth))):
+        Orth[ind].update(cond=2)
+for ind in range(0,int(len(Iso))):
+        Iso[ind].update(cond=3)
+    
+#Putting all the shuffled, mixed, trial blocks into one final variable
+#using the shuffled condition order
+alltrials = []
+for i in range(0,int(len(conds))):
+    if conds[i] == 1:
+        alltrials.extend(Parr)
+    elif conds[i] == 2:
+        alltrials.extend(Orth)
+    elif conds[i] == 3:
+        alltrials.extend(Iso)
+        
+        
+#using PsychoPy's TrialHandler, makes it easier to index in a loop, and output
+trials = data.TrialHandler(alltrials, nReps=1, extraInfo=exp_info,
+                           method='sequential', originPath=datapath)
+
+def theGrating(size, vpos, hpos, orientation=90,  phase=0, sf=1):
+    grating = visual.GratingStim(win=win, units="deg",
+            size= [size,size], mask="raisedCos", 
+            maskParams = {'fringeWidth': 0.4}, sf = sf, contrast = contrast,
+            phase=phase)
+    return grating
+
 grating = visual.GratingStim(
     win=win,
     units="deg",
@@ -263,14 +261,6 @@ gratingbg = visual.GratingStim(
     units="deg",
     size=[20,20]
 )
-
-#We put a raised cosine wave mask around it so it looks nice and smooth at the edges
-gratingbg.mask = "raisedCos"
-gratingbg.maskParams = {'fringeWidth': 0.4}  
-
-gratingbg.sf=1 #1 cpd
-gratingbg.contrast = 0.25 #25% contrast
-gratingbg.phase = 0.0 #for now it's 0 but we randomly change and adapt this to the target in trial loop
 
 #Each of the 4 target gratings is going to appear 
 #at 5 degrees eccentricity from the center
@@ -288,167 +278,15 @@ grating_sf= [1,1,1,1]
 # one of four points in each trial.
 contrasts = [0, 0, 0, 0]
 
-    ##################################
-#### Preparing the instruction screen ####
-    ##################################
-    
-# We draw the text explaining what we will show
-instructions = visual.TextStim(
-    win=win,
-    pos=[0,6],
-    wrapWidth=None,
-    height=.5,
-    font="Palatino Linotype",
-    alignHoriz='center'
-    )
 
-    
-instructions.text = """
-In this experiment, you will see a small patch of horizontal bars located in one of four possible spots inside a bigger circle of bars, or isolated, without any context.\n
-Your task is to locate where it appears on each trial, and to respond by pressing a key on your keyboard.
-If the horizontal bars appear:
-"""
+a=instText(0,0,0.5,'asdasdsad')
+a.draw()
+a.flip()
 
-# Four additional texts on top of our example figures:
-instructions.draw()
-instructions2 = visual.TextStim(
-    win=win,
-    pos=[-6,3],
-    wrapWidth=None,
-    height=.5,
-    font="Palatino Linotype",
-    alignHoriz='center'
-    )
-
-instructions2.text = """
-On the left
-Press Left Arrow"""
-instructions2.draw()
-
-instructions2 = visual.TextStim(
-    win=win,
-    pos=[6,3],
-    wrapWidth=None,
-    height=.5,
-    font="Palatino Linotype",
-    alignHoriz='center'
-    )
-
-instructions2.text = """
-On the right
-Press Right Arrow"""
-instructions2.draw()
-
-
-
-# The last text
-
-instructions2.text= """After you respond, you will see a brief feedback about your accuracy.
-In total, the experiment is expected to last ~45 minutes
-(9 blocks, 80 trials each).
-Feel free to take a short break inbetween blocks.
-Press SPACE key for the next instruction."""
-instructions2.pos=[0,-7]
-instructions2.draw()
-
-
-
-# We draw four example gratings in instruction screen. 
-instgrating = visual.GratingStim(
-    win=win,
-    units="deg",
-    size=[.75, .75]
-)
-
-instgratingbg = visual.GratingStim(
-    win=win,
-    units="deg",
-    size=[5,5]
-)
-instgratingbg.mask = "raisedCos"
-instgratingbg.maskParams = {'fringeWidth': 0.4}  
-
-instgratingbg.sf=3 #20cycles per 400pix
-instgratingbg.contrast = 0.25 #25% contrast
-
-instgratingbg_vpos=[-1,-1,-1,-1]
-instgratingbg_hpos=[-9,-3,3,9]
-
-
-
-instgrating_vpos = [1, -1, 1, -1]
-instgrating_hpos = [-1, -1, 1, 1]
-
-instgrating_phase = [0.0, 0.0, 0.0, 0.0]
-instorientations = [90.0, 90.0, 90.0, 90.0]
-instbgorientations = [90,0,90,0]
-instgrating.mask = "raisedCos"
-instgrating.maskParams = {'fringeWidth': 0.4}  
-instgrating_sf= [3,3,3,3]
-#contrast = 0.1
-
-instcontrasts = [.5, 0, 0, 0]
-for i_phase in range(4):
-    
-    instgratingbg.phase = instgrating_phase[i_phase]
-    instgratingbg.pos = [instgratingbg_hpos[i_phase], instgratingbg_vpos[i_phase]]
-    instgratingbg.sf = instgrating_sf[i_phase]
-    instgratingbg.ori = instbgorientations[i_phase]
-    instgratingbg.contrast = .25
-    instgratingbg.draw()
-    for i_phase2 in range(4):
-        instgrating.phase = instgrating_phase[i_phase2]
-        instgrating.pos = [instgratingbg_hpos[i_phase]+instgrating_hpos[i_phase2], instgratingbg_vpos[i_phase]+instgrating_vpos[i_phase2]]
-        instgrating.sf = instgrating_sf[i_phase2]
-        instgrating.ori = instorientations[i_phase2]
-        instgrating.contrast = instcontrasts[i_phase2]
-        instgrating.draw()
-    instcontrasts = np.roll(instcontrasts,1)
-    
-
-
-win.flip()
-# We flip
 trialno=0
 blockno=0
-# and wait for key press to start the experiment.
-keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
-
-instructions2.text= """Now you will do a short practice.
-Before you begin, please make sure that your head is positioned
-so that the cross at the center of this screen aligns with your eyes."""
-instructions2.pos=[0,3]
-instructions2.draw()
-
-fixcross = visual.TextStim(
-    win=win,
-    pos=[0,.75],
-    wrapWidth=None,
-    height=1,
-    font="Palatino Linotype",
-    alignHoriz='center',
-    alignVert='center',
-    color= "black",
-    bold=True
-    )
 
 
-fixcross.text = """
-+"""
-fixcross.draw()
-
-
-instructions2.text= """Please keep your gaze at the center at all times.
-Press SPACE key to begin the practice."""
-instructions2.pos=[0,-3]
-instructions2.draw()
-win.flip()
-
-
-keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
-
-
-win.flip()
 pracscont = np.geomspace(0.005,0.03,20)
 pracstarg = npm.repmat([0,1,2,3],1,5)
 pracstarg = pracstarg[0]
@@ -633,31 +471,31 @@ for trial in trials:
     #Which condition, which staircase:    
     if trial['cond'] == 1:
         if trial['staircase'] == 1:
-            while psiParrSim1.xCurrent == None:
+            while psiParr1.xCurrent == None:
                 pass # hang in this loop until the psi calculation has finished
-            contrast = psiParrSim1.xCurrent 
+            contrast = psiParr1.xCurrent 
         elif trial['staircase'] == 2:
-            while psiParrSim2.xCurrent == None:
+            while psiParr2.xCurrent == None:
                 pass # hang in this loop until the psi calculation has finished
-            contrast = psiParrSim2.xCurrent
+            contrast = psiParr2.xCurrent
     elif trial['cond'] == 2:
         if trial['staircase'] == 1:
-            while psiOrthSim1.xCurrent == None:
+            while psiOrth1.xCurrent == None:
                 pass # hang in this loop until the psi calculation has finished 
-            contrast = psiOrthSim1.xCurrent
+            contrast = psiOrth1.xCurrent
         elif trial['staircase'] == 2:
-            while psiOrthSim2.xCurrent == None:
+            while psiOrth2.xCurrent == None:
                 pass # hang in this loop until the psi calculation has finished
-            contrast = psiOrthSim2.xCurrent
+            contrast = psiOrth2.xCurrent
     elif trial['cond'] == 3:
         if trial['staircase'] == 1:
-            while psiIsoSim1.xCurrent == None:
+            while psiIso1.xCurrent == None:
                 pass # hang in this loop until the psi calculation has finished
-            contrast = psiIsoSim1.xCurrent
+            contrast = psiIso1.xCurrent
         elif trial['staircase'] == 2:
-            while psiIsoSim2.xCurrent == None:
+            while psiIso2.xCurrent == None:
                 pass # hang in this loop until the psi calculation has finished 
-            contrast = psiIsoSim2.xCurrent
+            contrast = psiIso2.xCurrent
             
     trialno=trialno+1
     if trialno%(nTrials*nStaircase) == 1:
@@ -806,19 +644,19 @@ for trial in trials:
     trials.addData('contrast', contrast)
     if trial['cond'] == 1:
         if trial['staircase'] == 1:
-            psiParrSim1.addData(acc)
+            psiParr1.addData(acc)
         elif trial['staircase'] == 2:
-            psiParrSim2.addData(acc)
+            psiParr2.addData(acc)
     elif trial['cond'] == 2:
         if trial['staircase'] == 1:
-            psiOrthSim1.addData(acc)
+            psiOrth1.addData(acc)
         elif trial['staircase'] == 2:
-            psiOrthSim2.addData(acc)
+            psiOrth2.addData(acc)
     elif trial['cond'] == 3:
         if trial['staircase'] == 1:
-            psiIsoSim1.addData(acc)
+            psiIso1.addData(acc)
         elif trial['staircase'] == 2:
-            psiIsoSim2.addData(acc)
+            psiIso2.addData(acc)
 
     #print(psi.xCurrent)
     
@@ -889,29 +727,29 @@ Press a key to exit the experiment"""
  
 trials.saveAsWideText(data_fname + '.csv', delim=',')
 
-print('Estimated parameters for ParrSim are mu=%.3f, sigma=%.3f and lapse=%.2f.' %(((psiParrSim1.eThreshold+psiParrSim2.eThreshold)/2),
-                                                                                         ((psiParrSim1.eSlope+psiParrSim2.eSlope)/2),
-                                                                                         ((psiParrSim1.eLapse+psiParrSim2.eLapse)/2)))
+print('Estimated parameters for Parr are mu=%.3f, sigma=%.3f and lapse=%.2f.' %(((psiParr1.eThreshold+psiParr2.eThreshold)/2),
+                                                                                         ((psiParr1.eSlope+psiParr2.eSlope)/2),
+                                                                                         ((psiParr1.eLapse+psiParr2.eLapse)/2)))
 
-print('Estimated parameters for OrthSim are mu=%.3f, sigma=%.3f and lapse=%.2f.' % (((psiOrthSim1.eThreshold+psiOrthSim2.eThreshold)/2),
-                                                                                         ((psiOrthSim1.eSlope+psiOrthSim2.eSlope)/2),
-                                                                                         ((psiOrthSim1.eLapse+psiOrthSim2.eLapse)/2)))
+print('Estimated parameters for Orth are mu=%.3f, sigma=%.3f and lapse=%.2f.' % (((psiOrth1.eThreshold+psiOrth2.eThreshold)/2),
+                                                                                         ((psiOrth1.eSlope+psiOrth2.eSlope)/2),
+                                                                                         ((psiOrth1.eLapse+psiOrth2.eLapse)/2)))
 
-print('Estimated parameters for IsoSim are mu=%.3f, sigma=%.3f and lapse=%.2f.' % (((psiIsoSim1.eThreshold+psiIsoSim2.eThreshold)/2),
-                                                                                         ((psiIsoSim1.eSlope+psiIsoSim2.eSlope)/2),
-                                                                                         ((psiIsoSim1.eLapse+psiIsoSim2.eLapse)/2)))
+print('Estimated parameters for Iso are mu=%.3f, sigma=%.3f and lapse=%.2f.' % (((psiIso1.eThreshold+psiIso2.eThreshold)/2),
+                                                                                         ((psiIso1.eSlope+psiIso2.eSlope)/2),
+                                                                                         ((psiIso1.eLapse+psiIso2.eLapse)/2)))
 
 
 
 #import PsiMarginal
 #
 #
-#psiParrSim1.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
-#psiParrSim2.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
+#psiParr1.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
+#psiParr2.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
 #psiParrLead1.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
 #psiParrLead2.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
-#psiOrthSim1.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
-#psiOrthSim2.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
+#psiOrth1.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
+#psiOrth2.plot(muRef=0.03, sigmaRef=6.8, guessRef=.25)
 #psiOrthLead1.plot(muRef=0.03,sigmaRef=6.8, guessRef=.25)
 #psiOrthLead2.plot(muRef=0.03,sigmaRef=6.8, guessRef=.25)
 
