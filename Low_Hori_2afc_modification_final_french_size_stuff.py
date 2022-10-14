@@ -51,8 +51,8 @@ exp_info = {
         'gender': ('male', 'female'),
         'age':'',
         'left-handed':False,
-        'Stim_size':'2.5',
-        'eccentricity':'1',
+        'Stim_size':'0.75',
+        'eccentricity':'1.5',
         'screenwidth(cm)': '49',
         'screenresolutionhori(pixels)': '1920',
         'screenresolutionvert(pixels)': '1200',
@@ -311,7 +311,7 @@ gratingbg = visual.GratingStim(
 gratingbg.mask = "raisedCos"
 gratingbg.maskParams = {'fringeWidth': 0.4}  
 
-gratingbg.sf=1 #1 cpd
+gratingbg.sf=2 #1 cpd
 gratingbg.contrast = 0.25 #25% contrast
 gratingbg.phase = 0.0 #for now it's 0 but we randomly change and adapt this to the target in trial loop
 
