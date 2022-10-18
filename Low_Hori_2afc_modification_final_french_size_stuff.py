@@ -60,14 +60,14 @@ exp_info = {
         }
 
 dlg = gui.DlgFromDict(dictionary=exp_info, title=exp_name)
-           
+          
 # Here we make a dictionary with all the instruction in english to be able to translate them all later on
-instruction_dictionary={"instructions.text1": "Dans cette expérience, vous verez des petites parcelles de barres horizontales située soit dans un des deux endroits possible à l'intérieur d'un plus grand cercle de barres, ou isolées, sans aucun contexte.\n\n Votre tâche consiste à localiser où les barres vont apparaitre à chaque essai et à répondre en appuyant sur une touche de votre clavier. Si les barres horizontales apparaissent:\n\n",
+instruction_dictionary={"instructions.text1": "Dans cette expérience, vous verrez apparaître sur l'écran des stimuli en forme de grilles. Ces stimuli se trouveront soit à l'intérieur d'une plus grande grille, soit de manière isolée. \n\n Votre tâche consiste à localiser où les grilles vont apparaître en appuyant sur une touche de votre clavier. Si les grilles apparaissent:\n\n",
                          "instructions.text2": "Sur la gauche \nAppuyez sur la flèche de gauche ",
                          "instructions.text3": "Sur la droite \nAppuyez sur la flèche de droite",
-                         "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\nAu total cette expérience devrait durer ~45 minutes\n(9 blocs, 80 essais chacun).\nN'hésitez pas à prendre une petite pause entre chaque des blocs.\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
-                         "instructions.text5": "Maintenant, vous allez réaliser un petit entrainement.\nAvant de commencer, assurez vous que votre tête soit positionée de manière à ce que la croix au milieu de l'écran soit alignée avec vos yeux.",
-                         "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\nAppuyez sur la barre 'ESPACE' pour commencer l entrainement.",
+                         "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\n\n Au total cette expérience devrait durer ~45 minutes (9 blocs, 80 essais chacun). N'hésitez pas à prendre une petite pause entre chacun des blocs.\n\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
+                         "instructions.text5": "Maintenant, vous allez réaliser un petit entrainement. Avant de commencer, assurez vous que votre tête soit positionée de manière à ce que la croix au milieu de l'écran soit alignée avec vos yeux.",
+                         "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' pour commencer l'entrainement.",
                          "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nAppuyez sur la barre 'ESPACE' pour commencer l'expérience .\nBloc:0/9",
                          "intblocktext.text":"Prenez le temps de vous reposer avant le prochain bloc. Vous pouvez appuyer sur la barre 'ESPACE' pour continuer après 30 secondes lorsque vous serez prêt.\nBloc: ",
                          "endtext.text":"Merci pour votre participation.\nAppuyez sur une touche pour quitter l'expérience"}       
@@ -311,7 +311,7 @@ gratingbg = visual.GratingStim(
 gratingbg.mask = "raisedCos"
 gratingbg.maskParams = {'fringeWidth': 0.4}  
 
-gratingbg.sf=2 #1 cpd
+gratingbg.sf = 2 #1 cpd
 gratingbg.contrast = 0.25 #25% contrast
 gratingbg.phase = 0.0 #for now it's 0 but we randomly change and adapt this to the target in trial loop
 
@@ -339,9 +339,9 @@ contrasts = [0, 0]
 # We draw the text explaining what we will show
 instructions = visual.TextStim(
     win=win,
-    pos=[0,6],
+    pos=[0,8],
     wrapWidth=None,
-    height=.5,
+    height=.65,
     font="Palatino Linotype",
     alignHoriz='center'
     )
@@ -355,7 +355,7 @@ instructions2 = visual.TextStim(
     win=win,
     pos=[-6,3],
     wrapWidth=None,
-    height=.5,
+    height=.65,
     font="Palatino Linotype",
     alignHoriz='center'
     )
@@ -368,7 +368,7 @@ instructions2 = visual.TextStim(
     win=win,
     pos=[6,3],
     wrapWidth=None,
-    height=.5,
+    height=.65,
     font="Palatino Linotype",
     alignHoriz='center'
     )
@@ -381,7 +381,7 @@ instructions2.draw()
 # The last text
 
 instructions2.text= instruction_dictionary['instructions.text4']
-instructions2.pos=[0,-7]
+instructions2.pos=[0,-11]
 instructions2.draw()
 
 
@@ -390,13 +390,13 @@ instructions2.draw()
 instgrating = visual.GratingStim(
     win=win,
     units="deg",
-    size=[.75, .75]
+    size=[1, 1]
 )
 
 instgratingbg = visual.GratingStim(
     win=win,
     units="deg",
-    size=[5,5]
+    size=[7,7]
 )
 instgratingbg.mask = "raisedCos"
 instgratingbg.maskParams = {'fringeWidth': 0.4}  
@@ -448,7 +448,7 @@ blockno=0
 keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 
 instructions2.text= instruction_dictionary['instructions.text5']
-instructions2.pos=[0,3]
+instructions2.pos=[0,5]
 instructions2.draw()
 
 fixcross = visual.TextStim(
@@ -470,7 +470,7 @@ fixcross.draw()
 
 
 instructions2.text= instruction_dictionary['instructions.text6']
-instructions2.pos=[0,-3]
+instructions2.pos=[0,-5]
 instructions2.draw()
 win.flip()
 
@@ -600,11 +600,9 @@ for trial in practrials:
             break
         elif 'left' in keys:
             resp = 0
-            #feedback.pos=[-5,0]
             feedback.pos=[-float(exp_info['eccentricity']),0]
         elif 'right' in keys:
             resp = 1
-            #feedback.pos=[5,0]
             feedback.pos=[float(exp_info['eccentricity']),0]
     #We check accuracy after the key press, and show a check or cross depending on that.
     if resp == 0 and trial['targ'] == 0:
@@ -883,7 +881,7 @@ for trial in trials:
         for timetime in range(30):
             intblocktext = visual.TextStim(
                     win=win,
-                    height=.5,
+                    height=.65,
                     font="Palatino Linotype",
                     alignHoriz='center'
                     )   
@@ -893,8 +891,8 @@ for trial in trials:
             timer1-=1
             timertext = visual.TextStim(
                 win=win,
-                height=.5,
-                pos=[0,-5],
+                height=.65,
+                pos=[0,-6],
                 font="Palatino Linotype",
                 alignHoriz='center')
             timertext.text=""":""" + str(timer1)
