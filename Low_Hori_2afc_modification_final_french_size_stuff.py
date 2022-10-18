@@ -56,7 +56,7 @@ exp_info = {
         'screenwidth(cm)': '49',
         'screenresolutionhori(pixels)': '1920',
         'screenresolutionvert(pixels)': '1200',
-        'refreshrate(hz)': '100'
+        'refreshrate(hz)': '120'
         }
 
 dlg = gui.DlgFromDict(dictionary=exp_info, title=exp_name)
@@ -257,7 +257,7 @@ trials = data.TrialHandler(alltrials, nReps=1, extraInfo=exp_info,
 #=======================================
     
 #We define a monitor, which helps control for visual angle.
-mon = monitors.Monitor('mon1')
+mon = monitors.Monitor('Vpixx040821')
 mon.setDistance(57)
 
 #This is just for piloting, not relevant to actual experiment, normally we'll
@@ -285,7 +285,7 @@ win = visual.Window(monitor = mon,
                     size =scrsize,
                     color='grey',
                     units='deg',
-                    fullscr=False)
+                    fullscr=True)
 #Hide the cursor when the window is opened:
 win.mouseVisible=False
 
@@ -325,7 +325,7 @@ orientations = [90.0, 90.0]
 # random phase between 0 and 1
 phases = np.arange(0,1,.03)
 # all of them have the identical sf as the bg grating.
-grating_sf= [1,1]
+grating_sf= [2,2]
 # at the beginning, all four have 0 contrast, depending on where the 
 # target will be shown and the staircase, we'll increase contrast at 
 # one of four points in each trial.
@@ -542,7 +542,7 @@ for trial in practrials:
     contrasts[trial['targ']] = contrast
     # Inside of the fixation dot is turned white during the stimulus presentation
     
-    circle.fillColor=[1,1,1]
+    #circle.fillColor=[1,1,1]
     circle.draw()
     for nFrames in range(SimEmptyFrame):            # .05 empty screen
         circle.draw()
@@ -566,7 +566,7 @@ for trial in practrials:
 
     #After the presentation is completed, the inside of the fixation dot turns
     #Dark grey.
-    circle.fillColor=[-.5,-.5,-.5]
+    #circle.fillColor=[-.5,-.5,-.5]
     circle.draw()       
     #And we draw 2 faded circles at the 2 locations for the subject to choose.
     for circ_loc in range(2):
@@ -740,7 +740,7 @@ for trial in trials:
     contrasts[trial['targetloc']] = contrast
     # Inside of the fixation dot is turned white during the stimulus presentation
     
-    circle.fillColor=[1,1,1]
+    #circle.fillColor=[1,1,1]
     circle.draw()
     for nFrames in range(SimEmptyFrame):            # .05 empty screen
         circle.draw()
@@ -766,7 +766,7 @@ for trial in trials:
 
     #After the presentation is completed, the inside of the fixation dot turns
     #Dark grey.
-    circle.fillColor=[-.5,-.5,-.5]
+    #circle.fillColor=[-.5,-.5,-.5]
     circle.draw()       
     #And we draw 2 faded circles at the 2 locations for the subject to choose.
     for circ_loc in range(2):
