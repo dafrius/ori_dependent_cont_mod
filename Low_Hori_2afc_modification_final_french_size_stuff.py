@@ -311,7 +311,7 @@ gratingbg = visual.GratingStim(
 gratingbg.mask = "raisedCos"
 gratingbg.maskParams = {'fringeWidth': 0.4}  
 
-gratingbg.sf = 2 #1 cpd
+gratingbg.sf = 2 #2 cpd
 gratingbg.contrast = 0.25 #25% contrast
 gratingbg.phase = 0.0 #for now it's 0 but we randomly change and adapt this to the target in trial loop
 
@@ -341,9 +341,10 @@ instructions = visual.TextStim(
     win=win,
     pos=[0,8],
     wrapWidth=None,
-    height=.65,
+    height=.65, #set the size of the text
     font="Palatino Linotype",
-    alignHoriz='center'
+    alignHoriz='center',
+    color = [-.9,-.9,-.9] #set the color of the text 
     )
 
     
@@ -357,7 +358,8 @@ instructions2 = visual.TextStim(
     wrapWidth=None,
     height=.65,
     font="Palatino Linotype",
-    alignHoriz='center'
+    alignHoriz='center',
+    color = [-.9, -.9, -.9]
     )
 
 instructions2.text = instruction_dictionary['instructions.text2']
@@ -370,7 +372,8 @@ instructions2 = visual.TextStim(
     wrapWidth=None,
     height=.65,
     font="Palatino Linotype",
-    alignHoriz='center'
+    alignHoriz='center',
+    color = [-.9,-.9,-.9] 
     )
 
 instructions2.text = instruction_dictionary['instructions.text3']
@@ -505,7 +508,7 @@ for trial in practrials:
         circle = visual.Circle(
                 win=win,
                 units="deg",
-                radius=.1,
+                radius=.075,
                 fillColor=[-1, -1, -1],
                 lineColor=[-1, -1, -1]
                 )
@@ -516,7 +519,7 @@ for trial in practrials:
     circle = visual.Circle(
     win=win,
     units="deg",
-    radius=.1,
+    radius=.075,
     fillColor=[-1, -1, -1],
     lineColor=[-1, -1, -1]
     )
@@ -588,7 +591,7 @@ for trial in practrials:
     win=win,
     pos=[9,0],
     wrapWidth=None,
-    height=.5,
+    height=.4,
     font="Palatino Linotype",
     alignHoriz='center'
     )                         
@@ -621,7 +624,7 @@ for trial in practrials:
         acc = 0         
         feedback.text = """✘"""
     
-    for circ_loc in range(2):
+    for circ_loc in range(2): #circle that appears with the feedback
         circle.radius = size/2
         circle.fillColor=[0,0,0]
         circle.lineColor=[-.1,-.1,-.1]
@@ -633,10 +636,10 @@ for trial in practrials:
     core.wait(.2)
     
     
-    circle = visual.Circle(
+    circle = visual.Circle( #fixation dot
                 win=win,
                 units="deg",
-                radius=.1,
+                radius=.075,
                 fillColor=[-1, -1, -1],
                 lineColor=[-1, -1, -1]
                 )
@@ -698,7 +701,7 @@ for trial in trials:
         circle = visual.Circle(
                 win=win,
                 units="deg",
-                radius=.1,
+                radius=.075,
                 fillColor=[-1, -1, -1],
                 lineColor=[-1, -1, -1]
                 )
@@ -711,7 +714,7 @@ for trial in trials:
     circle = visual.Circle(
     win=win,
     units="deg",
-    radius=.1,
+    radius=.075,
     fillColor=[-1, -1, -1],
     lineColor=[-1, -1, -1]
     )
@@ -786,7 +789,7 @@ for trial in trials:
     win=win,
     pos=[9,0],
     wrapWidth=None,
-    height=.5,
+    height=.4,
     font="Palatino Linotype",
     alignHoriz='center'
     )                         
@@ -861,7 +864,7 @@ for trial in trials:
     circle = visual.Circle(
                 win=win,
                 units="deg",
-                radius=.1,
+                radius=.075,
                 fillColor=[-1, -1, -1],
                 lineColor=[-1, -1, -1]
                 )
