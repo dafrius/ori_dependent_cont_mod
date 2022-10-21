@@ -62,10 +62,10 @@ exp_info = {
 dlg = gui.DlgFromDict(dictionary=exp_info, title=exp_name)
           
 # Here we make a dictionary with all the instruction in english to be able to translate them all later on
-instruction_dictionary={"instructions.text1": "Dans cette expérience, vous verrez apparaître sur l'écran des stimuli en forme de grilles. Ces stimuli se trouveront soit à l'intérieur d'une plus grande grille, soit de manière isolée. \n\n Votre tâche consiste à localiser où les grilles vont apparaître en appuyant sur une touche de votre clavier. Si les grilles apparaissent:\n\n",
-                         "instructions.text2": "Sur la gauche \nAppuyez sur 'S' ",
-                         "instructions.text3": "Sur la droite \nAppuyez sur 'L' ",
-                         "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\n\n Au total cette expérience devrait durer ~45 minutes (9 blocs, 80 essais chacun). N'hésitez pas à prendre une petite pause entre chacun des blocs.\n\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
+instruction_dictionary={"instructions.text1": "Dans cette etude, vous verrez apparaître sur l'écran des stimuli en forme de grilles. Ces stimuli se trouveront soit à l'intérieur d'une plus grande grille, soit de manière isolée. \n\n Votre tâche consiste à localiser où les grilles vont apparaître en appuyant sur une touche de votre clavier. Si les grilles apparaissent:\n\n",
+                         "instructions.text2": "Sur la gauche \nAppuyez sur la touche 'S' ",
+                         "instructions.text3": "Sur la droite \nAppuyez sur la touche 'L' ",
+                         "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\n\n Au total cette etude devrait durer ~45 minutes (9 blocs, 80 essais chacun). N'hésitez pas à prendre une petite pause entre chacun des blocs.\n\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
                          "instructions.text5": "Maintenant, vous allez réaliser un petit entrainement. Avant de commencer, assurez vous que votre tête soit positionée de manière à ce que la croix au milieu de l'écran soit alignée avec vos yeux.",
                          "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' pour commencer l'entrainement.",
                          "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nAppuyez sur la barre 'ESPACE' pour commencer l'expérience .\nBloc:0/9",
@@ -779,7 +779,7 @@ for trial in trials:
     win.flip()
     rt_clock = core.Clock()        
     #And we wait for a key response, and we record RT
-    keys = event.waitKeys(keyList=['left','right','escape'])
+    keys = event.waitKeys(keyList=['s','l','escape'])
     rt=rt_clock.getTime()
     
     
