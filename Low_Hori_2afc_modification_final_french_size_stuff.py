@@ -62,14 +62,17 @@ exp_info = {
 dlg = gui.DlgFromDict(dictionary=exp_info, title=exp_name)
           
 # Here we make a dictionary with all the instruction in english to be able to translate them all later on
-instruction_dictionary={"instructions.text1": "Dans cette etude, vous verrez apparaître sur l'écran des stimuli en forme de grilles. Ces stimuli se trouveront soit à l'intérieur d'une plus grande grille, soit de manière isolée. \n\n Votre tâche consiste à localiser où les grilles vont apparaître en appuyant sur une touche de votre clavier. Si les grilles apparaissent:\n\n",
-                         "instructions.text2": "Sur la gauche \nAppuyez sur la touche 'S' ",
-                         "instructions.text3": "Sur la droite \nAppuyez sur la touche 'L' ",
-                         "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\n\n Au total cette etude devrait durer ~45 minutes (9 blocs, 80 essais chacun). N'hésitez pas à prendre une petite pause entre chacun des blocs.\n\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
+instruction_dictionary={"instructions.text1": "Dans cette étude, vous verrez apparaître sur l'écran des stimuli en forme de grilles. Ces stimuli se trouveront soit à l'intérieur d'une plus grande grille, soit de manière isolée. \n\n Votre tâche consiste à localiser où les grilles vont apparaître en appuyant sur une touche de votre clavier. Si les grilles apparaissent:\n\n",
+                         "instructions.text2": "Sur la gauche \nAppuyez sur 'S' ",
+                         "instructions.text3": "Sur la droite \nAppuyez sur 'L' ",
+                         "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\n\n Au total cette expérience devrait durer ~45 minutes (9 blocs, 80 essais chacun). N'hésitez pas à prendre une petite pause entre chacun des blocs.\n\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
                          "instructions.text5": "Maintenant, vous allez réaliser un petit entrainement. Avant de commencer, assurez vous que votre tête soit positionée de manière à ce que la croix au milieu de l'écran soit alignée avec vos yeux.",
-                         "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' pour commencer l'entrainement.",
-                         "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nAppuyez sur la barre 'ESPACE' pour commencer l'expérience .\nBloc:0/9",
+                         "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' voir les prochaines instructions.",
+                         "instructions.text6a": "Veuillez placer vos mains sur les touches 'S' et 'L' du clavier.",
+                         "instructions.text6b": "Appuyez sur la barre 'ESPACE' pour commencer l'entrainement.",
+                         "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nVous allez maintenant commencer l'étude.\nAppuyez sur la barre 'ESPACE' pour commencer l'étude .\nBloc:0/9",
                          "intblocktext.text":"Prenez le temps de vous reposer avant le prochain bloc. Vous pouvez appuyer sur la barre 'ESPACE' pour continuer après 30 secondes lorsque vous serez prêt.\nBloc: ",
+                         'timertext.text':"Prêt",
                          "endtext.text":"Merci pour votre participation.\nAppuyez sur une touche pour quitter l'expérience"}       
        
 #%% Now we translate the instruction if required
@@ -478,9 +481,36 @@ instructions2.draw()
 win.flip()
 
 
+# last instructions screen
 keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 
+instructions2.text= instruction_dictionary['instructions.text6a']
+instructions2.pos=[0,5]
+instructions2.draw()
 
+fixcross = visual.TextStim(
+    win=win,
+    pos=[0,.75],
+    wrapWidth=None,
+    height=1,
+    font="Palatino Linotype",
+    alignHoriz='center',
+    alignVert='center',
+    color= "black",
+    bold=True
+    )
+
+
+fixcross.text = """
++"""
+fixcross.draw()
+
+instructions2.text= instruction_dictionary['instructions.text6b']
+instructions2.pos=[0,-5]
+instructions2.draw()
+win.flip()
+
+keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 #%%============================
 # Begin of the practice trial
 #============================
@@ -665,7 +695,6 @@ keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 #%%========================
 # Beginning of the trials
 #========================
-
 for trial in trials:
     #Which condition, which staircase:    
     if trial['cond'] == 1:
@@ -876,8 +905,8 @@ for trial in trials:
     else:
         circle.draw()
         win.flip()
-         
-    #We take a break in between blocks:
+     
+#%%    #We take a break in between blocks:
     if trialno%(nTrials*2) == 0 and trialno != alltotal:
         blockno+=1
         timer1=30
@@ -886,7 +915,8 @@ for trial in trials:
                     win=win,
                     height=.65,
                     font="Palatino Linotype",
-                    alignHoriz='center'
+                    alignHoriz='center',
+                    color = [-.9, -.9, -.9],
                     )   
             intblocktext.text= instruction_dictionary['intblocktext.text'] + str(blockno) + """/9"""
             intblocktext.draw()
@@ -895,8 +925,9 @@ for trial in trials:
             timertext = visual.TextStim(
                 win=win,
                 height=.65,
-                pos=[0,-6],
+                pos=[0,-5],
                 font="Palatino Linotype",
+                color =[-.9, -.9, -.9],
                 alignHoriz='center')
             timertext.text=""":""" + str(timer1)
             timertext.draw()
@@ -910,10 +941,10 @@ for trial in trials:
     elif trialno == alltotal:
         endtext = visual.TextStim(
                 win=win,
-                height=.5,
+                height=.65,
                 font="Palatino Linotype",
-                alignHoriz='center'
-                )   
+                alignHoriz='center',
+                color = [-.9, -.9, -.9])     
         endtext.text= instruction_dictionary['endtext.text']
         endtext.draw()
         win.flip()
