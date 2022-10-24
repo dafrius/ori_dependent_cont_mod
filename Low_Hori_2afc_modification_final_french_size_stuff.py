@@ -408,7 +408,7 @@ instgratingbg = visual.GratingStim(
 instgratingbg.mask = "raisedCos"
 instgratingbg.maskParams = {'fringeWidth': 0.4}  
 
-instgratingbg.sf=4.5 #20cycles per 400pix
+instgratingbg.sf=3 #20cycles per 400pix
 instgratingbg.contrast = 0.25 #25% contrast
 
 instgratingbg_vpos=[-1.5,-1.5]
@@ -424,7 +424,7 @@ instorientations = [90.0, 90.0]
 instbgorientations = [90,0]
 instgrating.mask = "raisedCos"
 instgrating.maskParams = {'fringeWidth': 0.4}  
-instgrating_sf= [4.5,4.5]
+instgrating_sf= [3,3]
 #contrast = 0.1
 
 instcontrasts = [.5, 0]
@@ -564,8 +564,8 @@ def block_break(block_no, timer, alltotal):
 #============================
 
 win.flip()
-pracscont = np.geomspace(0.05,0.15,20)
-pracstarg = npm.repmat([0,1],1,10)
+pracscont = np.geomspace(0.005,0.03,20)
+pracstarg = npm.repmat([0,1,2,3],1,5)
 pracstarg = pracstarg[0]
 
 prac_order=[]
