@@ -408,7 +408,7 @@ instgratingbg = visual.GratingStim(
 instgratingbg.mask = "raisedCos"
 instgratingbg.maskParams = {'fringeWidth': 0.4}  
 
-instgratingbg.sf=3 #20cycles per 400pix
+instgratingbg.sf=4.5 #20cycles per 400pix
 instgratingbg.contrast = 0.25 #25% contrast
 
 instgratingbg_vpos=[-1.5,-1.5]
@@ -424,7 +424,7 @@ instorientations = [90.0, 90.0]
 instbgorientations = [90,0]
 instgrating.mask = "raisedCos"
 instgrating.maskParams = {'fringeWidth': 0.4}  
-instgrating_sf= [3,3]
+instgrating_sf= [4.5,4.5]
 #contrast = 0.1
 
 instcontrasts = [.5, 0]
