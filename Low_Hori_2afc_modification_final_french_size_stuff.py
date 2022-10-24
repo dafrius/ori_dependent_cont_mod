@@ -288,7 +288,8 @@ win = visual.Window(monitor = mon,
                     size =scrsize,
                     color='grey',
                     units='deg',
-                    fullscr=True)
+                    fullscr=True,
+                    screen=1)
 #Hide the cursor when the window is opened:
 win.mouseVisible=False
 
@@ -396,7 +397,7 @@ instructions2.draw()
 instgrating = visual.GratingStim(
     win=win,
     units="deg",
-    size=[1, 1]
+    size=[0.5, 0.5]
 )
 
 instgratingbg = visual.GratingStim(
@@ -511,6 +512,51 @@ instructions2.draw()
 win.flip()
 
 keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
+#%%
+def block_break(block_no, timer, alltotal):
+    # timer=1
+    intblocktext = visual.TextStim(
+                    win=win,
+                    height=.65,
+                    font="Palatino Linotype",
+                    alignHoriz='center',
+                    color = [-.9, -.9, -.9])   
+    timertext = visual.TextStim(win=win,
+            height=.65, 
+            pos=[0,-5],
+            font="Palatino Linotype",
+            alignHoriz = 'center',
+            color = [-.9, -.9, -.9])
+    if trialno == alltotal:
+        endtext = visual.TextStim(
+                win=win,
+                height=.65,
+                font="Palatino Linotype",
+                alignHoriz='center',
+                color = [-.9, -.9, -.9])     
+        endtext.text= instruction_dictionary['endtext.text']
+        endtext.draw()
+        win.flip()
+        keys = event.waitKeys()
+    intblocktext.text= instruction_dictionary['intblocktext.text'] + str(blockno) + """/9"""
+    for time in range(timer):
+        timer-=1
+        intblocktext.draw()
+        timertext.text=""":""" + str(timer)
+        timertext.draw()
+        core.wait(1)
+        win.flip()
+        if timer == 0:
+            timertext.text= instruction_dictionary['timertext.text']
+            intblocktext.draw()
+            timertext.draw()
+            win.flip()
+    keys = event.waitKeys(keyList=['space','escape'])
+    if 'escape' in keys:
+        win.close()
+        f.close()
+    win.flip()
+    core.wait(2)
 #%%============================
 # Begin of the practice trial
 #============================
@@ -599,7 +645,8 @@ for trial in practrials:
 
     #After the presentation is completed, the inside of the fixation dot turns
     #Dark grey.
-    #circle.fillColor=[-.5,-.5,-.5]
+    circle.fillColor=[-.5,-.5,-.5]
+    circle.lineColor=[-.5,-.5,-.5]
     circle.draw()       
     #And we draw 2 faded circles at the 2 locations for the subject to choose.
     for circ_loc in range(2):
@@ -658,6 +705,7 @@ for trial in practrials:
         circle.radius = size/2
         circle.fillColor=[0,0,0]
         circle.lineColor=[-.1,-.1,-.1]
+        circle.lineWidth=0.75
         circle.pos = [grating_hpos[circ_loc],grating_vpos[circ_loc]]
         circle.draw()
     feedback.color = [-.5,-.5,-.5]
@@ -695,8 +743,12 @@ keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 #%%========================
 # Beginning of the trials
 #========================
+block_no = 0
 for trial in trials:
-    #Which condition, which staircase:    
+    if trialno > 0 and trialno%80 == 0:
+        block_no += 1 
+        block_break(block_no,5, alltotal)
+        #Which condition, which staircase:    
     if trial['cond'] == 1:
         if trial['staircase'] == 1:
             while psiParrSim1.xCurrent == None:
@@ -725,7 +777,7 @@ for trial in trials:
                 pass # hang in this loop until the psi calculation has finished 
             contrast = psiIsoSim2.xCurrent
             
-    trialno=trialno+1
+    trialno+=1
     if trialno%(nTrials*nStaircase) == 1:
         circle = visual.Circle(
                 win=win,
@@ -796,13 +848,15 @@ for trial in trials:
 
     #After the presentation is completed, the inside of the fixation dot turns
     #Dark grey.
-    #circle.fillColor=[-.5,-.5,-.5]
+    circle.fillColor=[-.5,-.5,-.5]
+    circle.lineColor=[-.5,-.5,-.5]
     circle.draw()       
     #And we draw 2 faded circles at the 2 locations for the subject to choose.
     for circ_loc in range(2):
         circle.radius = size/2
         circle.fillColor=[0,0,0]
         circle.lineColor=[-.1,-.1,-.1]
+        circle.lineWidth=0.75
         circle.pos = [grating_hpos[circ_loc],grating_vpos[circ_loc]]
         circle.draw()
     win.flip()
@@ -898,57 +952,58 @@ for trial in trials:
                 lineColor=[-1, -1, -1]
                 )
     if rt < 2:
-        circle.draw()
+        #circle.draw()
         win.flip()
         waiter=2-rt
         core.wait(waiter)
     else:
-        circle.draw()
+        #circle.draw()
         win.flip()
-     
+ 
 #%%    #We take a break in between blocks:
-    if trialno%(nTrials*2) == 0 and trialno != alltotal:
-        blockno+=1
-        timer1=30
-        for timetime in range(30):
-            intblocktext = visual.TextStim(
-                    win=win,
-                    height=.65,
-                    font="Palatino Linotype",
-                    alignHoriz='center',
-                    color = [-.9, -.9, -.9],
-                    )   
-            intblocktext.text= instruction_dictionary['intblocktext.text'] + str(blockno) + """/9"""
-            intblocktext.draw()
+    # if trialno%(nTrials*2) == 0 and trialno != alltotal:
+    #     blockno+=1
+    #     timer1=30
+    #     for timetime in range(30):
+    #         intblocktext = visual.TextStim(
+    #                 win=win,
+    #                 height=.65,
+    #                 font="Palatino Linotype",
+    #                 alignHoriz='center',
+    #                 color = [-.9, -.9, -.9],
+    #                 )   
+    #         intblocktext.text= instruction_dictionary['intblocktext.text'] + str(blockno) + """/9"""
+    #         intblocktext.draw()
         
-            timer1-=1
-            timertext = visual.TextStim(
-                win=win,
-                height=.65,
-                pos=[0,-5],
-                font="Palatino Linotype",
-                color =[-.9, -.9, -.9],
-                alignHoriz='center')
-            timertext.text=""":""" + str(timer1)
-            timertext.draw()
-            core.wait(1)
-            win.flip()
+    #         timer1-=1
+    #         timertext = visual.TextStim(
+    #             win=win,
+    #             height=.65,
+    #             pos=[0,-5],
+    #             font="Palatino Linotype",
+    #             color =[-.9, -.9, -.9],
+    #             alignHoriz='center')
+    #         timertext.text=""":""" + str(timer1)
+    #         timertext.draw()
+    #         core.wait(1)
+    #         win.flip()
         
-        keys = event.waitKeys(keyList=['escape','space'])
-        if 'escape' in keys:
-            win.close()
-            break
-    elif trialno == alltotal:
-        endtext = visual.TextStim(
-                win=win,
-                height=.65,
-                font="Palatino Linotype",
-                alignHoriz='center',
-                color = [-.9, -.9, -.9])     
-        endtext.text= instruction_dictionary['endtext.text']
-        endtext.draw()
-        win.flip()
-        keys = event.waitKeys()
+    #     keys = event.waitKeys(keyList=['escape','space'])
+    #     if 'escape' in keys:
+    #         win.close()
+    #         break
+    # elif trialno == alltotal:
+    #     endtext = visual.TextStim(
+    #             win=win,
+    #             height=.65,
+    #             font="Palatino Linotype",
+    #             alignHoriz='center',
+    #             color = [-.9, -.9, -.9])     
+    #     endtext.text= instruction_dictionary['endtext.text']
+    #     endtext.draw()
+    #     win.flip()
+    #     keys = event.waitKeys()
+
 
  
 trials.saveAsWideText(data_fname + '.csv', delim=',')
