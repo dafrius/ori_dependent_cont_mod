@@ -70,7 +70,7 @@ instruction_dictionary={"instructions.text1": "Dans cette étude, vous verrez ap
                          "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' voir les prochaines instructions.",
                          "instructions.text6a": "Veuillez placer vos mains sur les touches 'S' et 'L' du clavier.",
                          "instructions.text6b": "Appuyez sur la barre 'ESPACE' pour commencer l'entrainement.",
-                         "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nVous allez maintenant commencer l'étude.\nAppuyez sur la barre 'ESPACE' pour commencer l'étude .\nBloc:0/9",
+                         "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nVous allez maintenant commencer l'étude.\n\nAppuyez sur la barre 'ESPACE' pour commencer l'étude .\n\nBloc:0/9",
                          "intblocktext.text":"Prenez le temps de vous reposer avant le prochain bloc. Vous pouvez appuyer sur la barre 'ESPACE' pour continuer après 30 secondes lorsque vous serez prêt.\nBloc: ",
                          'timertext.text':"Prêt",
                          "endtext.text":"Merci pour votre participation.\nAppuyez sur une touche pour quitter l'expérience"}       
@@ -105,7 +105,7 @@ nConditions = 3 #Parallel, Orthogonal, Isolated
 nTemporal = 1 # if only Simultaneous, 1
               # else, 2
 nRunPerCond = 3
-
+totalblocks = 9 
 threshold = stimRange 
 thresholdOrthSimPrior = ('normal',.0139,.07) # Prior for Orthogonal Context condition
 thresholdParrSimPrior = ('normal',.2549, .2) # Prior for Parallel Context condition
@@ -408,7 +408,7 @@ instgratingbg = visual.GratingStim(
 instgratingbg.mask = "raisedCos"
 instgratingbg.maskParams = {'fringeWidth': 0.4}  
 
-instgratingbg.sf=4.5 #20cycles per 400pix
+instgratingbg.sf=3 #20cycles per 400pix
 instgratingbg.contrast = 0.25 #25% contrast
 
 instgratingbg_vpos=[-1.5,-1.5]
@@ -424,7 +424,7 @@ instorientations = [90.0, 90.0]
 instbgorientations = [90,0]
 instgrating.mask = "raisedCos"
 instgrating.maskParams = {'fringeWidth': 0.4}  
-instgrating_sf= [4.5,4.5]
+instgrating_sf= [3,3]
 #contrast = 0.1
 
 instcontrasts = [.5, 0]
@@ -514,6 +514,7 @@ win.flip()
 keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 #%%
 def block_break(block_no, timer, alltotal):
+    win.setColor([-.3, -.3, -.3], colorSpace='rgb')
     # timer=1
     intblocktext = visual.TextStim(
                     win=win,
@@ -538,7 +539,7 @@ def block_break(block_no, timer, alltotal):
         endtext.draw()
         win.flip()
         keys = event.waitKeys()
-    intblocktext.text= instruction_dictionary['intblocktext.text'] + str(blockno) + """/9"""
+    intblocktext.text= instruction_dictionary['intblocktext.text'] + str(block_no) + """/""" + str(totalblocks)
     for time in range(timer):
         timer-=1
         intblocktext.draw()
@@ -552,6 +553,7 @@ def block_break(block_no, timer, alltotal):
             timertext.draw()
             win.flip()
     keys = event.waitKeys(keyList=['space','escape'])
+    win.color='grey'
     if 'escape' in keys:
         win.close()
         f.close()
@@ -562,8 +564,8 @@ def block_break(block_no, timer, alltotal):
 #============================
 
 win.flip()
-pracscont = np.geomspace(0.05,0.15,20)
-pracstarg = npm.repmat([0,1],1,10)
+pracscont = np.geomspace(0.005,0.03,20)
+pracstarg = npm.repmat([0,1,2,3],1,5)
 pracstarg = pracstarg[0]
 
 prac_order=[]
@@ -723,12 +725,12 @@ for trial in practrials:
                 )
     
     if rt < 2:
-        circle.draw()
+        #circle.draw()
         win.flip()
         waiter=2-rt
         core.wait(waiter)
     else:
-        circle.draw()
+        #circle.draw()
         win.flip()
 
 
@@ -747,7 +749,7 @@ block_no = 0
 for trial in trials:
     if trialno > 0 and trialno%80 == 0:
         block_no += 1 
-        block_break(block_no,5, alltotal)
+        block_break(block_no,30, alltotal)
         #Which condition, which staircase:    
     if trial['cond'] == 1:
         if trial['staircase'] == 1:
@@ -959,52 +961,6 @@ for trial in trials:
     else:
         #circle.draw()
         win.flip()
- 
-#%%    #We take a break in between blocks:
-    # if trialno%(nTrials*2) == 0 and trialno != alltotal:
-    #     blockno+=1
-    #     timer1=30
-    #     for timetime in range(30):
-    #         intblocktext = visual.TextStim(
-    #                 win=win,
-    #                 height=.65,
-    #                 font="Palatino Linotype",
-    #                 alignHoriz='center',
-    #                 color = [-.9, -.9, -.9],
-    #                 )   
-    #         intblocktext.text= instruction_dictionary['intblocktext.text'] + str(blockno) + """/9"""
-    #         intblocktext.draw()
-        
-    #         timer1-=1
-    #         timertext = visual.TextStim(
-    #             win=win,
-    #             height=.65,
-    #             pos=[0,-5],
-    #             font="Palatino Linotype",
-    #             color =[-.9, -.9, -.9],
-    #             alignHoriz='center')
-    #         timertext.text=""":""" + str(timer1)
-    #         timertext.draw()
-    #         core.wait(1)
-    #         win.flip()
-        
-    #     keys = event.waitKeys(keyList=['escape','space'])
-    #     if 'escape' in keys:
-    #         win.close()
-    #         break
-    # elif trialno == alltotal:
-    #     endtext = visual.TextStim(
-    #             win=win,
-    #             height=.65,
-    #             font="Palatino Linotype",
-    #             alignHoriz='center',
-    #             color = [-.9, -.9, -.9])     
-    #     endtext.text= instruction_dictionary['endtext.text']
-    #     endtext.draw()
-    #     win.flip()
-    #     keys = event.waitKeys()
-
-
  
 trials.saveAsWideText(data_fname + '.csv', delim=',')
 
