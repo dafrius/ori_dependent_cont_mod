@@ -599,7 +599,7 @@ for trial in practrials:
 
     #After the presentation is completed, the inside of the fixation dot turns
     #Dark grey.
-    #circle.fillColor=[-.5,-.5,-.5]
+    circle.fillColor=[-.5,-.5,-.5]
     circle.draw()       
     #And we draw 2 faded circles at the 2 locations for the subject to choose.
     for circ_loc in range(2):
@@ -796,7 +796,7 @@ for trial in trials:
 
     #After the presentation is completed, the inside of the fixation dot turns
     #Dark grey.
-    #circle.fillColor=[-.5,-.5,-.5]
+    circle.fillColor=[-.5,-.5,-.5]
     circle.draw()       
     #And we draw 2 faded circles at the 2 locations for the subject to choose.
     for circ_loc in range(2):
