@@ -516,8 +516,8 @@ keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 #============================
 
 win.flip()
-pracscont = np.geomspace(0.005,0.03,20)
-pracstarg = npm.repmat([0,1,2,3],1,5)
+pracscont = np.geomspace(0.05,0.15,20)
+pracstarg = npm.repmat([0,1],1,10)
 pracstarg = pracstarg[0]
 
 prac_order=[]
