@@ -281,12 +281,14 @@ SimEmptyFrame=int(50/framelength) #50 ms
 SimFrame = int(100/framelength) #100 ms
 LeadFrame = int(50/framelength) #50 ms
 
+reduce=50
 
 mon.setSizePix(scrsize)
 # Open a window
 win = visual.Window(monitor = mon, 
                     size =scrsize,
-                    color='grey',
+                    colorSpace = "rgb255",
+                    color= [128-reduce, 128-reduce, 128-reduce],
                     units='deg',
                     fullscr=True,
                     screen=1)
@@ -301,6 +303,8 @@ size = float(exp_info['Stim_size'])
 grating = visual.GratingStim(
     win=win,
     units="deg",
+    colorSpace="rgb255",
+    color=[128-reduce, 128-reduce, 128-reduce],
     size=[size, size]
 )
 #And the background grating
@@ -308,7 +312,9 @@ grating = visual.GratingStim(
 gratingbg = visual.GratingStim(
     win=win,
     units="deg",
-    size=[20,20]
+    colorSpace="rgb255",
+    color=[128-reduce, 128-reduce, 128-reduce],
+    size=[7,7]
 )
 
 #We put a raised cosine wave mask around it so it looks nice and smooth at the edges
@@ -565,7 +571,7 @@ def block_break(block_no, timer, alltotal):
 
 win.flip()
 pracscont = np.geomspace(0.005,0.03,20)
-pracstarg = npm.repmat([0,1,2,3],1,5)
+pracstarg = npm.repmat([0,1],1,5)
 pracstarg = pracstarg[0]
 
 prac_order=[]
@@ -618,7 +624,7 @@ for trial in practrials:
     
     contrast = [trial['cont']]
     #Set contrasts to 0
-    contrasts = [0, 0, 0, 0]
+    contrasts = [0, 0]
     #Set one of the contrasts to what the staircase determines:
     contrasts[trial['targ']] = contrast
     # Inside of the fixation dot is turned white during the stimulus presentation
@@ -961,7 +967,7 @@ for trial in trials:
     else:
         #circle.draw()
         win.flip()
- 
+
 trials.saveAsWideText(data_fname + '.csv', delim=',')
 
 
