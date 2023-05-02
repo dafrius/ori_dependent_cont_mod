@@ -285,7 +285,11 @@ LeadFrame = int(50/framelength) #50 ms
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 reduce=50
+=======
+color_text = float(exp_info['color_text']) # the color of the text depends on the settings we select initialy
+>>>>>>> 55c0abc79ec347c1c172655e393ab19c884231c2
 =======
 color_text = float(exp_info['color_text']) # the color of the text depends on the settings we select initialy
 >>>>>>> 55c0abc79ec347c1c172655e393ab19c884231c2
@@ -587,7 +591,11 @@ def block_break(block_no, timer, alltotal):
 win.flip()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 pracscont = np.geomspace(0.005,0.03,20)
+=======
+pracscont = np.geomspace(0.01,0.1,20)
+>>>>>>> 55c0abc79ec347c1c172655e393ab19c884231c2
 =======
 pracscont = np.geomspace(0.01,0.1,20)
 >>>>>>> 55c0abc79ec347c1c172655e393ab19c884231c2
