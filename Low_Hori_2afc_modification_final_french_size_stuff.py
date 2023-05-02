@@ -53,6 +53,7 @@ exp_info = {
         'left-handed':False,
         'Stim_size':'0.75',
         'eccentricity':'1.5',
+        'color_text':'.75',
         'screenwidth(cm)': '49',
         'screenresolutionhori(pixels)': '1920',
         'screenresolutionvert(pixels)': '1200',
@@ -67,9 +68,10 @@ instruction_dictionary={"instructions.text1": "Dans cette étude, vous verrez ap
                          "instructions.text3": "Sur la droite \nAppuyez sur 'L' ",
                          "instructions.text4": "Après avoir répondu, vous recevrez un court feedback sur votre performance.\n\n Au total cette expérience devrait durer ~45 minutes (9 blocs, 80 essais chacun). N'hésitez pas à prendre une petite pause entre chacun des blocs.\n\nAppuyez sur la barre 'ESPACE' pour la prochaine instruction.",
                          "instructions.text5": "Maintenant, vous allez réaliser un petit entrainement. Avant de commencer, assurez vous que votre tête soit positionée de manière à ce que la croix au milieu de l'écran soit alignée avec vos yeux.",
-                         "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' voir les prochaines instructions.",
-                         "instructions.text6a": "Veuillez placer vos mains sur les touches 'S' et 'L' du clavier.",
-                         "instructions.text6b": "Appuyez sur la barre 'ESPACE' pour commencer l'entrainement.",
+                         "instructions.text6": "Veuillez garder votre regard fixé au centre durant toute l'expérience.\n\nAppuyez sur la barre 'ESPACE' commencer l'entrainement.",
+                         "instructions.text6a": "Vous pouvez maintenant placer vos mains sur les touches 'S' et 'L' du clavier.",
+                         "instructions.text6b": "Appuyez sur la barre 'ESPACE' pour voir les prochaines instructions.",
+                         'instructions.text6c': "Si vous avez des questions par rapport aux consignes, sentez-vous libre de les poser.",
                          "instructions.text7": "Bravo!\nVous avez terminé l'entrainement.\nVous allez maintenant commencer l'étude.\n\nAppuyez sur la barre 'ESPACE' pour commencer l'étude .\n\nBloc:0/9",
                          "intblocktext.text":"Prenez le temps de vous reposer avant le prochain bloc. Vous pouvez appuyer sur la barre 'ESPACE' pour continuer après 30 secondes lorsque vous serez prêt.\nBloc: ",
                          'timertext.text':"Prêt",
@@ -281,7 +283,11 @@ SimEmptyFrame=int(50/framelength) #50 ms
 SimFrame = int(100/framelength) #100 ms
 LeadFrame = int(50/framelength) #50 ms
 
+<<<<<<< HEAD
 reduce=50
+=======
+color_text = float(exp_info['color_text']) # the color of the text depends on the settings we select initialy
+>>>>>>> 55c0abc79ec347c1c172655e393ab19c884231c2
 
 mon.setSizePix(scrsize)
 # Open a window
@@ -354,7 +360,7 @@ instructions = visual.TextStim(
     height=.65, #set the size of the text
     font="Palatino Linotype",
     alignHoriz='center',
-    color = [-.9,-.9,-.9] #set the color of the text 
+    color = [color_text,color_text,color_text] #set the color of the text 
     )
 
     
@@ -369,7 +375,7 @@ instructions2 = visual.TextStim(
     height=.65,
     font="Palatino Linotype",
     alignHoriz='center',
-    color = [-.9, -.9, -.9]
+    color = [color_text,color_text,color_text]
     )
 
 instructions2.text = instruction_dictionary['instructions.text2']
@@ -383,7 +389,7 @@ instructions2 = visual.TextStim(
     height=.65,
     font="Palatino Linotype",
     alignHoriz='center',
-    color = [-.9,-.9,-.9] 
+    color = [color_text,color_text,color_text] 
     )
 
 instructions2.text = instruction_dictionary['instructions.text3']
@@ -394,7 +400,7 @@ instructions2.draw()
 # The last text
 
 instructions2.text= instruction_dictionary['instructions.text4']
-instructions2.pos=[0,-11]
+instructions2.pos=[0,-10]
 instructions2.draw()
 
 
@@ -460,7 +466,7 @@ blockno=0
 # and wait for key press to start the experiment.
 keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 
-instructions2.text= instruction_dictionary['instructions.text5']
+instructions2.text= instruction_dictionary['instructions.text6c']
 instructions2.pos=[0,5]
 instructions2.draw()
 
@@ -474,16 +480,19 @@ fixcross = visual.TextStim(
     alignVert='center',
     color= "black",
     bold=True
-    )
+    )  
 
 
 fixcross.text = """
 +"""
 fixcross.draw()
 
+instructions2.text= instruction_dictionary['instructions.text6a']
+instructions2.pos=[0,-7]
+instructions2.draw()
 
-instructions2.text= instruction_dictionary['instructions.text6']
-instructions2.pos=[0,-5]
+instructions2.text= instruction_dictionary['instructions.text6b']
+instructions2.pos=[0,-10]
 instructions2.draw()
 win.flip()
 
@@ -491,16 +500,13 @@ win.flip()
 # last instructions screen
 keys = event.waitKeys(keyList=['space','escape'])#core.wait(.1)
 
-instructions2.text= instruction_dictionary['instructions.text6a']
-instructions2.pos=[0,5]
-instructions2.draw()
 
 fixcross = visual.TextStim(
     win=win,
     pos=[0,.75],
     wrapWidth=None,
     height=1,
-    font="Palatino Linotype",
+    font="Palatino Linotype", 
     alignHoriz='center',
     alignVert='center',
     color= "black",
@@ -512,8 +518,13 @@ fixcross.text = """
 +"""
 fixcross.draw()
 
-instructions2.text= instruction_dictionary['instructions.text6b']
-instructions2.pos=[0,-5]
+instructions2.text= instruction_dictionary['instructions.text5']
+instructions2.pos=[0,5]
+instructions2.draw()
+
+
+instructions2.text= instruction_dictionary['instructions.text6']
+instructions2.pos=[0,-9]
 instructions2.draw()
 win.flip()
 
@@ -527,20 +538,20 @@ def block_break(block_no, timer, alltotal):
                     height=.65,
                     font="Palatino Linotype",
                     alignHoriz='center',
-                    color = [-.9, -.9, -.9])   
+                    color = [color_text,color_text,color_text])   
     timertext = visual.TextStim(win=win,
             height=.65, 
             pos=[0,-5],
             font="Palatino Linotype",
             alignHoriz = 'center',
-            color = [-.9, -.9, -.9])
+            color = [color_text,color_text,color_text])
     if trialno == alltotal:
         endtext = visual.TextStim(
                 win=win,
                 height=.65,
                 font="Palatino Linotype",
                 alignHoriz='center',
-                color = [-.9, -.9, -.9])     
+                color = [color_text,color_text,color_text])     
         endtext.text= instruction_dictionary['endtext.text']
         endtext.draw()
         win.flip()
@@ -570,7 +581,11 @@ def block_break(block_no, timer, alltotal):
 #============================
 
 win.flip()
+<<<<<<< HEAD
 pracscont = np.geomspace(0.005,0.03,20)
+=======
+pracscont = np.geomspace(0.01,0.1,20)
+>>>>>>> 55c0abc79ec347c1c172655e393ab19c884231c2
 pracstarg = npm.repmat([0,1],1,5)
 pracstarg = pracstarg[0]
 
